@@ -22,7 +22,7 @@ services:
     ports:
       - "9000:9000"
     env_file:
-      - .env
+      - ${ENV_FILE:-.env}
     depends_on:
       - redis
     networks:
