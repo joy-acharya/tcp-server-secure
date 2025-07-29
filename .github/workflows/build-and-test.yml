@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build-and-test:
@@ -17,30 +20,29 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build Docker Images
-        run: docker-compose build
+        run: docker compose build
 
       - name: Run Docker Containers
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Wait for TCP Server to be ready
         run: |
           for i in {1..10}; do
-            if docker exec $(docker ps -qf "name=tcp-server") nc -z localhost 9000; then
-              echo "✅ TCP server is ready"
-              exit 0
-            fi
-            echo "⏳ Waiting for TCP server on port 9000..."
-            sleep 3
+            nc -z localhost 9000 && echo "✅ Port 9000 open" && exit 0
+            echo "Waiting for port 9000..."
+            sleep 2
           done
-          echo "❌ TCP Server failed to start on port 9000" && exit 1
+          echo "❌ Port 9000 not open"
+          exit 1
 
       - name: Run Jest Unit Tests
         run: |
-          docker exec $(docker ps -qf "name=tcp-server") npx jest --coverage
+          docker compose exec -T tcp-server npm install --only=dev
+          docker compose exec -T tcp-server npm test
 
       - name: List Running Containers
-        run: docker ps
+        run: docker ps -a
 
       - name: Shutdown
         if: always()
-        run: docker-compose down --volumes --remove-orphans
+        run: docker compose down --volumes --remove-orphans
