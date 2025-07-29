@@ -26,10 +26,10 @@ jobs:
       - name: Wait for TCP Server to be ready
         run: |
           for i in {1..10}; do
-            echo "Waiting for port 9000..."
-            nc -zv 127.0.0.1 9000 && exit 0 || sleep 3
+            echo "Waiting for port 9300..."
+            nc -zv 127.0.0.1 9300 && exit 0 || sleep 3
           done
-          echo "\u274C Port 9000 not open"
+          echo "\u274C Port 9300 not open"
           exit 1
 
       - name: Run Jest Unit Tests
