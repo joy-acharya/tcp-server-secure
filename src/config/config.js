@@ -2,7 +2,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 module.exports = {
-  port: process.env.PORT || 9000,
+  port: process.env.PORT || 9300,
   redis: {
     host: process.env.REDIS_HOST || "127.0.0.1",
     port: parseInt(process.env.REDIS_PORT) || 6379,

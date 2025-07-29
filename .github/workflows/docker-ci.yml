@@ -29,9 +29,9 @@ jobs:
       - name: List Running Containers
         run: docker ps
 
-      - name: Check TCP Server Health (port 9000)
+      - name: Check TCP Server Health (port 9300)
         run: |
-          nc -zv 127.0.0.1 9000 || (echo "Port 9000 not open" && exit 1)
+          nc -zv 127.0.0.1  || (echo "Port 9300 not open" && exit 1)
 
       - name: Shutdown
         run: docker compose down
