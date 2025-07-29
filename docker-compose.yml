@@ -1,60 +1,49 @@
-name: build-and-test
+---
+# docker-compose.yml
+version: "3.8"
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    command: ["redis-server", "--requirepass", "AudR@red4312"]
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
 
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
+  tcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    ports:
+      - "9000:9000"
+    env_file:
+      - ${ENV_FILE:-.env}
+    depends_on:
+      - redis
+    networks:
+      - app-network
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9000"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+  tcp-client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    depends_on:
+      - tcp-server
+    environment:
+      - CHUNK_DELAY=1000
+      - CLIENT_COUNT=100
+    networks:
+      - app-network
+    restart: on-failure
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build Docker Images
-        run: docker compose build
-
-      - name: Run Docker Containers
-        run: docker compose up -d
-
-      - name: Wait for TCP Server to be ready
-        run: |
-          for i in {1..10}; do
-            echo "Waiting for port 9000..."
-            if nc -zv 127.0.0.1 9000; then
-              echo "✅ Port 9000 is open"
-              exit 0
-            fi
-            sleep 3
-          done
-          echo "❌ Port 9000 not open"
-          exit 1
-
-      - name: Print All Docker Logs on Failure
-        if: failure()
-        run: |
-          echo "==== Docker Containers ===="
-          docker ps -a
-          echo "==== Logs from all containers ===="
-          for id in $(docker ps -aq); do
-            echo "---- Logs for container $id ----"
-            docker logs "$id" || true
-          done
-
-      - name: List Running Containers
-        run: docker ps
-
-      - name: Run Jest Unit Tests
-        run: |
-          npm ci
-          npm test
-
-      - name: Shutdown
-        if: always()
-        run: docker compose down --volumes --remove-orphans
+networks:
+  app-network:
+    driver: bridge

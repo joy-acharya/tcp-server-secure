@@ -2,12 +2,12 @@ name: build-and-test
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
+    branches: [main]
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,11 +15,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to DockerHub (Optional)
-        if: false
-        run: echo "Skipping login step unless needed"
+        uses: docker/setup-buildx-action@v2
 
       - name: Build Docker Images
         run: docker compose build
@@ -31,23 +27,21 @@ jobs:
         run: |
           for i in {1..10}; do
             echo "Waiting for port 9000..."
-            nc -zv 127.0.0.1 9000 && echo "✅ Port 9000 is open" && exit 0
-            sleep 3
+            nc -zv 127.0.0.1 9000 && exit 0 || sleep 3
           done
-          echo "❌ Port 9000 not open"
+          echo "\u274C Port 9000 not open"
           exit 1
-
-      - name: List Running Containers
-        run: docker ps
 
       - name: Run Jest Unit Tests
         run: |
-          docker compose exec -T tcp-server npm test
+          docker exec $(docker ps -qf "name=tcp-server") npm test
+
+      - name: List Running Containers
+        run: docker ps -a
 
       - name: Print TCP Server Logs
-        if: failure()
-        run: docker logs $(docker ps -aqf "name=tcp-server")
+        run: |
+          docker logs $(docker ps -qf "name=tcp-server")
 
       - name: Shutdown
-        if: always()
         run: docker compose down --volumes --remove-orphans
