@@ -4,14 +4,14 @@ services:
   redis:
     image: redis:latest
     container_name: redis
-    command: ["redis-server", "--requirepass", "AudR@red4312", "--notify-keyspace-events", "Kgl"]
+    command: ["redis-server", "--requirepass", "AudR@red4312"]
     ports:
       - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "-a", "AudR@red4312", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+    # healthcheck:
+    #   test: ["CMD", "redis-cli", "-a", "AudR@red4312", "ping"]
+    #   interval: 10s
+    #   timeout: 5s
+    #  retries: 3
     networks:
       - app-network
 
@@ -19,8 +19,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.server
-    ports:
-      - "9000:9000"
     env_file:
       - ${ENV_FILE:-.env}
     depends_on:
@@ -42,6 +40,7 @@ services:
       - tcp-server
     environment:
       - CHUNK_DELAY=1000
+      - CLIENT_COUNT=100
     networks:
       - app-network
     restart: on-failure

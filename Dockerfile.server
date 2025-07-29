@@ -9,4 +9,8 @@ RUN npm install --production
 
 COPY . .
 
-CMD ["node", "src/socket-server.js"]
+# Copy wait-for script
+COPY wait-for.sh /usr/local/bin/wait-for.sh
+RUN chmod +x /usr/local/bin/wait-for.sh
+
+CMD ["wait-for.sh", "redis:6379", "--", "node", "src/socket-server.js"]
