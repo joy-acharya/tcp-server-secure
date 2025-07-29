@@ -53,7 +53,7 @@ function simulateClient(
   lifetime = 10000,
 ) {
   setTimeout(() => {
-    const socket = net.createConnection(9000, "tcp-server", () => {
+    const socket = net.createConnection(9300, "tcp-server", () => {
       console.log(`✅ [Client ${clientId}] Connected to server`);
       const chunks = splitMessageChunks(clientId);
 

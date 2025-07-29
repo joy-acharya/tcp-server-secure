@@ -17,7 +17,7 @@ services:
       context: .
       dockerfile: Dockerfile.server
     ports:
-      - "9000:9000"
+      - "9300:9300"
     env_file:
       - ${ENV_FILE:-.env}
     depends_on:
