@@ -47,7 +47,9 @@ class ClientConnection {
       this.logger.warn(`Client disconnected: ${this.clientId}`);
       const clientId = this.socket.clientId || "[unidentified]";
       logger.warn(`[SocketServer] Client disconnected: ${clientId}`);
-      logger.info(`[SocketServer] Cleaned up connection for client ${clientId}`);
+      logger.info(
+        `[SocketServer] Cleaned up connection for client ${clientId}`,
+      );
       this.socketClosed = true;
       this.cleanup();
     });

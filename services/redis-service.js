@@ -2,7 +2,6 @@
 const { createClient } = require("redis");
 
 function setupRedis({ host, port, password }, logger) {
-
   logger.info(`password: ${password}, host: ${host}, port: ${port}`);
   const client = createClient({
     password,

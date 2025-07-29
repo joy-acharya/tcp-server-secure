@@ -46,7 +46,12 @@ function splitMessageChunks(clientId) {
   ];
 }
 
-function simulateClient(clientId, delay = 1000, launchDelay = 3000, lifetime = 10000) {
+function simulateClient(
+  clientId,
+  delay = 1000,
+  launchDelay = 3000,
+  lifetime = 10000,
+) {
   setTimeout(() => {
     const socket = net.createConnection(9000, "tcp-server", () => {
       console.log(`✅ [Client ${clientId}] Connected to server`);
@@ -59,7 +64,7 @@ function simulateClient(clientId, delay = 1000, launchDelay = 3000, lifetime = 1
               ? "📦 Final chunk with \\0"
               : `🚀 Chunk ${i + 1}`;
           console.log(
-            `➡️  [Client ${clientId}] Sending: ${label} (${chunks[i].length} bytes)`
+            `➡️  [Client ${clientId}] Sending: ${label} (${chunks[i].length} bytes)`,
           );
           socket.write(chunks[i]);
           await new Promise((r) => setTimeout(r, delay));
@@ -68,8 +73,8 @@ function simulateClient(clientId, delay = 1000, launchDelay = 3000, lifetime = 1
 
       // 🔥 Auto-destroy after specified lifetime
       // setTimeout(() => {
-        // console.warn(`🛑 [Client ${clientId}] Auto-destroying socket after ${lifetime}ms`);
-        // socket.destroy();
+      // console.warn(`🛑 [Client ${clientId}] Auto-destroying socket after ${lifetime}ms`);
+      // socket.destroy();
       // }, lifetime);
     });
 
@@ -97,10 +102,15 @@ function simulateClient(clientId, delay = 1000, launchDelay = 3000, lifetime = 1
               eventId: event.eventId,
             };
             socket.write(encodeMessage(ack));
-            console.log(`✅ [Client ${clientId}] Sent ACK for ${event.eventId}`);
+            console.log(
+              `✅ [Client ${clientId}] Sent ACK for ${event.eventId}`,
+            );
           }
         } catch (err) {
-          console.error(`❌ [Client ${clientId}] Decryption failed:`, err.message);
+          console.error(
+            `❌ [Client ${clientId}] Decryption failed:`,
+            err.message,
+          );
         }
       });
     });
@@ -119,16 +129,12 @@ function simulateClient(clientId, delay = 1000, launchDelay = 3000, lifetime = 1
 // simulateClient(101, 1000, 3000, 10000); // client 101
 // simulateClient(202, 1200, 4000, 10000); // client 202
 
-
 const totalClients = parseInt(process.env.CLIENT_COUNT || "2");
 
 for (let i = 1; i <= totalClients; i++) {
   const delay = 800 + Math.floor(Math.random() * 300); // delay between chunks
-  const launchDelay = 1000 + i * 30;                   // stagger client launch
+  const launchDelay = 1000 + i * 30; // stagger client launch
   const lifetime = 10000 + Math.floor(Math.random() * 5000); // auto-destroy
 
   simulateClient(i, delay, launchDelay, lifetime);
 }
-
-
-
