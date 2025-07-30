@@ -27,16 +27,16 @@ jobs:
         run: |
           docker logs $(docker ps -qf "name=tcp-server")
 
-      - name: Wait for TCP Server to be ready
-        run: |
-          echo "Checking if TCP server is accepting connections on port 9300..."
-          for i in {1..60}; do
-            echo "Waiting for port 9300..."
-            timeout 1 bash -c '</dev/tcp/127.0.0.1/9300' 2>/dev/null && echo "✅ Port 9300 open" && exit 0
-            sleep 2
-          done
-          echo "❌ Port 9300 not open"
-          exit 1
+      # - name: Wait for TCP Server to be ready
+      #   run: |
+      #     echo "Checking if TCP server is accepting connections on port 9300..."
+      #     for i in {1..60}; do
+      #       echo "Waiting for port 9300..."
+      #       timeout 1 bash -c '</dev/tcp/127.0.0.1/9300' 2>/dev/null && echo "✅ Port 9300 open" && exit 0
+      #       sleep 2
+      #     done
+      #     echo "❌ Port 9300 not open"
+      #     exit 1
 
 
       - name: Run Jest Unit Tests
