@@ -25,7 +25,13 @@ jobs:
 
       - name: Print TCP Server Logs
         run: |
-          docker logs $(docker ps -qf "name=tcp-server")
+          CONTAINER_ID=$(docker ps -qf "name=tcp-server")
+          if [ -n "$CONTAINER_ID" ]; then
+            docker logs "$CONTAINER_ID"
+          else
+            echo "⚠️ No container found with name matching 'tcp-server'"
+          fi
+
 
       # - name: Wait for TCP Server to be ready
       #   run: |
