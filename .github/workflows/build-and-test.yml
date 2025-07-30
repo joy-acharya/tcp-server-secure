@@ -38,6 +38,8 @@ jobs:
       #     echo "❌ Port 9300 not open"
       #     exit 1
 
+      # - name: Check TCP Server Health (port 9300)
+      #   run: nc -zv 127.0.0.1 9300 || (echo "Port 9300 not open" && exit 1)
 
       - name: Run Jest Unit Tests
         run: |
