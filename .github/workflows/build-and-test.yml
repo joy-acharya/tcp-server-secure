@@ -23,6 +23,10 @@ jobs:
       - name: Run Docker Containers
         run: docker compose up -d
 
+      - name: Print TCP Server Logs
+        run: |
+          docker logs $(docker ps -qf "name=tcp-server")
+
       - name: Wait for TCP Server to be ready
         run: |
           echo "Checking if TCP server is accepting connections on port 9300..."
@@ -41,10 +45,6 @@ jobs:
 
       - name: List Running Containers
         run: docker ps -a
-
-      - name: Print TCP Server Logs
-        run: |
-          docker logs $(docker ps -qf "name=tcp-server")
 
       - name: Shutdown
         run: docker compose down --volumes --remove-orphans
