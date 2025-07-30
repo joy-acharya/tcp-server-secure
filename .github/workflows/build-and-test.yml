@@ -45,3 +45,8 @@ jobs:
 
       - name: Shutdown
         run: docker compose down --volumes --remove-orphans
+
+      - name: Print All Container Logs (Debug)
+        run: |
+          docker ps -a
+          docker logs $(docker ps -aqf "name=tcp-server") || true

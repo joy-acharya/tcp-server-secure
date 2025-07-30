@@ -26,9 +26,9 @@ services:
       - app-network
     restart: on-failure
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "9000"]
+      test: ["CMD", "nc", "-z", "localhost", "9300"]
       interval: 5s
-      timeout: 5s
+      timeout: 3s
       retries: 5
 
   tcp-client:
