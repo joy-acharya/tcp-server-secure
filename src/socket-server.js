@@ -35,7 +35,10 @@ function startSocketServer(port = config.port) {
     logger.error("Server error:", err);
   });
 
+  logger.info("Initializing TCP server startup...");
+
   server.listen(port, '0.0.0.0', () => {
+    logger.info(`✅ TCP server running on port ${port}`);
     logger.info(`TCP server running on port ${port}`);
   });
 }
