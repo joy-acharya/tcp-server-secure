@@ -52,8 +52,8 @@ jobs:
           exit 1
 
       - name: Run Jest Unit Tests
-        run: |
-          docker exec $(docker ps -qf "name=tcp-server") npm test
+        run: docker run --rm -v ${{ github.workspace }}:/app -w /app node:18-alpine sh -c "npm install && npm test"
+
 
       - name: List Running Containers
         run: docker ps -a
