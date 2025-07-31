@@ -23,35 +23,31 @@ jobs:
       - name: Run Docker Containers
         run: docker compose up -d
 
-      # - name: Print TCP Server Logs
-      #   run: |
-      #     CONTAINER_ID=$(docker ps -qf "name=tcp-server")
-      #     if [ -z "$CONTAINER_ID" ]; then
-      #       echo "⚠️ TCP server container not found. Skipping log output."
-      #     else
-      #       docker logs "$CONTAINER_ID"
-      #     fi
-
-      - name: Debug Docker Port Bindings
-        run: docker ps
+      - name: Print TCP Server Logs
+        run: |
+          CONTAINER_ID=$(docker ps -qf "name=tcp-server")
+          if [ -z "$CONTAINER_ID" ]; then
+            echo "⚠️ TCP server container not found. Skipping log output."
+          else
+            docker logs "$CONTAINER_ID"
+          fi
 
       - name: Wait for TCP Server to be ready
         run: |
+          echo "Sleeping for 10s to allow TCP server to boot..."
+          sleep 10
           echo "Checking if TCP server is accepting connections on port 9300..."
-          for i in {1..10}; do
+          for i in {1..30}; do
             echo "Waiting for port 9300..."
-            timeout 1 bash -c '</dev/tcp/0.0.0.0/9300' 2>/dev/null && echo "✅ Port 9300 open" && exit 0
+            timeout 1 bash -c '</dev/tcp/127.0.0.1/9300' 2>/dev/null && echo "✅ Port 9300 open" && exit 0
             sleep 2
           done
           echo "❌ Port 9300 not open"
           exit 1
 
-      - name: Check TCP Server Health (port 9300)
-        run: nc -zv 0.0.0.0 9300 || (echo "Port 9300 not open" && exit 1)
-
-      # - name: Run Jest Unit Tests
-      #   run: |
-      #     docker exec $(docker ps -qf "name=tcp-server") npm test
+      - name: Run Jest Unit Tests
+        run: |
+          docker exec $(docker ps -qf "name=tcp-server") npm test
 
       - name: List Running Containers
         run: docker ps -a
