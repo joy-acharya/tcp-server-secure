@@ -22,15 +22,21 @@ jobs:
 
       - name: Run Docker Containers
         run: docker compose up -d
+      
+      - name: List All Containers (Debug)
+        run: docker ps -a
 
       - name: Print TCP Server Logs
         run: |
-          CONTAINER_ID=$(docker ps -qf "name=tcp-server")
+          CONTAINER_ID=$(docker ps -qf "name=tcp-server-secure-tcp-server")
           if [ -z "$CONTAINER_ID" ]; then
             echo "⚠️ TCP server container not found. Skipping log output."
+            exit 0
           else
+            echo "🪵 Printing logs for $CONTAINER_ID"
             docker logs "$CONTAINER_ID"
           fi
+
 
       - name: Wait for TCP Server to be ready
         run: |
