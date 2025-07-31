@@ -13,4 +13,4 @@ COPY . .
 COPY wait-for.sh /usr/local/bin/wait-for.sh
 RUN chmod +x /usr/local/bin/wait-for.sh
 
-CMD ["wait-for.sh", "redis:6379", "--", "node", "src/socket-server.js"]
+CMD ["sh", "/usr/local/bin/wait-for.sh", "redis:6379", "--", "node", "src/socket-server.js"]
