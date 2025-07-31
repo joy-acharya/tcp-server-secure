@@ -11,6 +11,10 @@
     "format-check": "prettier **/*.js --check"
   },
   "jest": {
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "testTimeout": 10000,
     "testEnvironment": "node",
     "coveragePathIgnorePatterns": [
       "/node_modules/"

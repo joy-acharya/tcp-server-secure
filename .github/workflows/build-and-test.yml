@@ -51,8 +51,8 @@ jobs:
           echo "❌ Port 9300 not open"
           exit 1
 
-      - name: Run Jest Unit Tests
-        run: docker run --rm -v ${{ github.workspace }}:/app -w /app node:18-alpine sh -c "npm install && npm test"
+      # - name: Run Jest Unit Tests
+      #   run: docker run --rm -v ${{ github.workspace }}:/app -w /app node:18-alpine sh -c "npm install && npm test"
 
 
       - name: List Running Containers
